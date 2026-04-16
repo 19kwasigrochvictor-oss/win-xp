@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>My XP Desktop</title>
+
+    <!-- XP-style UI from XP.css CDN -->
+    <link rel="stylesheet" href="https://unpkg.com/xp.css" />
+
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+        background: #0b5394;
+        font-family: "Tahoma", sans-serif;
+      }
+
+      .desktop {
+        position: relative;
+        width: 100vw;
+        height: 100vh;
+        overflow: hidden;
+      }
+
+      .taskbar {
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        height: 40px;
+        background: linear-gradient(#245edb, #1640a0);
+        display: flex;
+        align-items: center;
+        padding: 0 8px;
+        box-sizing: border-box;
+        color: white;
+      }
+
+      .start-button {
+        background: linear-gradient(#3bb14a, #0b7b27);
+        border-radius: 4px;
+        border: 1px solid #0b4f1a;
+        padding: 4px 12px;
+        font-weight: bold;
+        margin-right: 8px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        cursor: pointer;
+      }
+
+      .start-button span.logo {
+        width: 14px;
+        height: 14px;
+        background: white;
+        border-radius: 3px;
+      }
+
+      .taskbar-items {
+        flex: 1;
+        display: flex;
+        gap: 4px;
+      }
+
+      .taskbar-item {
+        background: #2b65d9;
+        border: 1px solid #0b2f7a;
+        padding: 2px 8px;
+        border-radius: 2px;
+        color: #e6f0ff;
+        font-size: 12px;
+        display: flex;
+        align-items: center;
+        cursor: pointer;
+        user-select: none;
+      }
+
+      .taskbar-item.inactive {
+        background: #274f9f;
+        opacity: 0.7;
+      }
+
+      .clock {
+        font-size: 12px;
+        padding: 2px 6px;
+        background: rgba(0, 0, 0, 0.1);
+        border-radius: 2px;
+      }
+
+      .desktop-icon {
+        position: absolute;
+        width: 64px;
+        text-align: center;
+        color: white;
+        font-size: 11px;
+        cursor: default;
+        user-select: none;
+      }
+
+      .desktop-icon .icon-box {
+        width: 32px;
+        height: 32px;
+        margin: 0 auto 4px;
+        background: linear-gradient(#ffffff, #d0d0d0);
+        border-radius: 6px;
+        border: 1px solid #808080;
+      }
+
+      .window-app {
+        position: absolute;
+        width: 400px;
+      }
+
+      .center-main {
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -60%);
+      }
+
+      .hidden {
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="desktop">
+      <!-- Desktop icons -->
+      <div class="desktop-icon" style="top: 20px; left: 20px;" data-app="main">
+        <div class="icon-box"></div>
+        <div>My Computer</div>
+      </div>
+
+      <div class="desktop-icon" style="top: 100px; left: 20px;" data-app="notepad">
+        <div class="icon-box"></div>
+        <div>Notepad</div>
+      </div>
+
+      <div class="desktop-icon" style="top: 180px; left: 20px;" data-app="media">
+        <div class="icon-box"></div>
+        <div>Media Player</div>
+      </div>
+
+      <!-- My Computer window -->
+      <div class="window window-app center-main" id="win-main">
+        <div class="title-bar" data-app="main">
+          <div class="title-bar-text">
+            My Computer
+          </div>
+          <div class="title-bar-controls">
+            <button aria-label="Minimize"></button>
+            <button aria-label="Maximize"></button>
+            <button aria-label="Close"></button>
+          </div>
+        </div>
+        <div class="window-body">
+          <p>Welcome to your fake Windows XP desktop.</p>
+          <p>This is the “My Computer” window.</p>
+        </div>
+      </div>
+
+      <!-- Notepad window -->
+      <div class="window window-app hidden" id="win-notepad" style="top: 120px; left: 260px;">
+        <div class="title-bar" data-app="notepad">
+          <div class="title-bar-text">
+            Notepad
+          </div>
+          <div class="title-bar-controls">
+            <button aria-label="Minimize"></button>
+            <button aria-label="Maximize"></button>
+            <button aria-label="Close"></button>
+          </div>
+        </div>
+        <div class="window-body">
+          <textarea style="width: 100%; height: 200px; font-family: monospace; font-size: 12px;">
+This is a simple Notepad clone.
+Type whatever you like here.
+          </textarea>
+        </div>
+      </div>
+
+      <!-- Media Player window -->
+      <div class="window window-app hidden" id="win-media" style="top: 200px; left: 360px;">
+        <div class="title-bar" data-app="media">
+          <div class="title-bar-text">
+            Media Player
+          </div>
+          <div class="title-bar-controls">
+            <button aria-label="Minimize"></button>
+            <button aria-label="Maximize"></button>
+            <button aria-label="Close"></button>
+          </div>
+        </div>
+        <div class="window-body">
+          <p>Fake media player UI.</p>
+          <progress value="30" max="100" style="width: 100%;"></progress>
+          <div style="margin-top: 8px;">
+            <button class="button">Play</button>
+            <button class="button">Pause</button>
+            <button class="button">Stop</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Taskbar -->
+      <div class="taskbar">
+        <div class="start-button">
+          <span class="logo"></span>
+          <span>Start</span>
+        </div>
+
+        <div class="taskbar-items" id="taskbarItems">
+          <div class="taskbar-item" data-app="main" id="tb-main">
+            My Computer
+          </div>
+          <div class="taskbar-item inactive" data-app="notepad" id="tb-notepad">
+            Notepad
+          </div>
+          <div class="taskbar-item inactive" data-app="media" id="tb-media">
+            Media Player
+          </div>
+        </div>
+
+        <div class="clock" id="clock">
+          --
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Generic app state
+      const apps = {
+        main: {
+          win: document.getElementById("win-main"),
+          task: document.getElementById("tb-main"),
+          isMinimized: false,
+          isClosed: false,
+          isMaximized: false,
+          normal: {},
+        },
+        notepad: {
+          win: document.getElementById("win-notepad"),
+          task: document.getElementById("tb-notepad"),
+          isMinimized: true,
+          isClosed: false,
+          isMaximized: false,
+          normal: {},
+        },
+        media: {
+          win: document.getElementById("win-media"),
+          task: document.getElementById("tb-media"),
+          isMinimized: true,
+          isClosed: false,
+          isMaximized: false,
+          normal: {},
+        },
+      };
+
+      // Save initial geometry
+      for (const key in apps) {
+        const w = apps[key].win;
+        apps[key].normal = {
+          top: w.style.top,
+          left: w.style.left,
+          width: w.style.width || "400px",
+          height: w.style.height || "",
+          transform: w.style.transform || "",
+        };
+      }
+
+      function bringToFront(appKey) {
+        // Simple z-index bump
+        let maxZ = 1;
+        for (const key in apps) {
+          const z = parseInt(apps[key].win.style.zIndex || "1", 10);
+          if (z > maxZ) maxZ = z;
+        }
+        apps[appKey].win.style.zIndex = maxZ + 1;
+      }
+
+      function showApp(appKey) {
+        const app = apps[appKey];
+        app.win.classList.remove("hidden");
+        app.isMinimized = false;
+        app.isClosed = false;
+        app.task.classList.remove("inactive");
+        bringToFront(appKey);
+      }
+
+      function minimizeApp(appKey) {
+        const app = apps[appKey];
+        app.win.classList.add("hidden");
+        app.isMinimized = true;
+        app.task.classList.add("inactive");
+      }
+
+      function closeApp(appKey) {
+        const app = apps[appKey];
+        app.win.classList.add("hidden");
+        app.isClosed = true;
+        app.isMinimized = false;
+        app.task.classList.add("inactive");
+      }
+
+      function toggleTask(appKey) {
+        const app = apps[appKey];
+        if (app.isClosed) {
+          showApp(appKey);
+        } else if (app.isMinimized) {
+          showApp(appKey);
+        } else {
+          minimizeApp(appKey);
+        }
+      }
+
+      function toggleMaximize(appKey) {
+        const app = apps[appKey];
+        const win = app.win;
+        if (!app.isMaximized) {
+          win.style.top = "0";
+          win.style.left = "0";
+          win.style.width = "100vw";
+          win.style.height = "calc(100vh - 40px)";
+          win.style.transform = "none";
+          app.isMaximized = true;
+        } else {
+          win.style.top = app.normal.top;
+          win.style.left = app.normal.left;
+          win.style.width = app.normal.width;
+          win.style.height = app.normal.height;
+          win.style.transform = app.normal.transform;
+          app.isMaximized = false;
+        }
+        app.isMinimized = false;
+        win.classList.remove("hidden");
+        app.task.classList.remove("inactive");
+        bringToFront(appKey);
+      }
+
+      // Hook up title bar buttons for each window
+      document.querySelectorAll(".title-bar").forEach((tb) => {
+        const appKey = tb.getAttribute("data-app");
+        const buttons = tb.querySelectorAll("button");
+        const [minBtn, maxBtn, closeBtn] = buttons;
+
+        minBtn.addEventListener("click", () => minimizeApp(appKey));
+        maxBtn.addEventListener("click", () => toggleMaximize(appKey));
+        closeBtn.addEventListener("click", () => closeApp(appKey));
+
+        // Dragging
+        let dragging = false;
+        let offsetX = 0;
+        let offsetY = 0;
+
+        tb.addEventListener("mousedown", (e) => {
+          const app = apps[appKey];
+          if (app.isMaximized) return;
+          dragging = true;
+          bringToFront(appKey);
+          const rect = app.win.getBoundingClientRect();
+          offsetX = e.clientX - rect.left;
+          offsetY = e.clientY - rect.top;
+          app.win.style.transform = "none";
+        });
+
+        document.addEventListener("mousemove", (e) => {
+          if (!dragging) return;
+          const app = apps[appKey];
+          app.win.style.left = e.clientX - offsetX + "px";
+          app.win.style.top = e.clientY - offsetY + "px";
+        });
+
+        document.addEventListener("mouseup", () => {
+          dragging = false;
+        });
+      });
+
+      // Taskbar buttons
+      document.querySelectorAll(".taskbar-item").forEach((tb) => {
+        const appKey = tb.getAttribute("data-app");
+        tb.addEventListener("click", () => toggleTask(appKey));
+      });
+
+      // Desktop icons: double-click to open app
+      document.querySelectorAll(".desktop-icon").forEach((icon) => {
+        const appKey = icon.getAttribute("data-app");
+        let lastClick = 0;
+        icon.addEventListener("click", () => {
+          const now = Date.now();
+          if (now - lastClick < 400) {
+            showApp(appKey);
+          }
+          lastClick = now;
+        });
+      });
+
+      // Clock
+      function updateClock() {
+        const clock = document.getElementById("clock");
+        const now = new Date();
+        const h = String(now.getHours()).padStart(2, "0");
+        const m = String(now.getMinutes()).padStart(2, "0");
+        clock.textContent = h + ":" + m;
+      }
+      updateClock();
+      setInterval(updateClock, 30000);
+    </script>
+  </body>
+</html>
